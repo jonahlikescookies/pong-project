@@ -169,7 +169,7 @@ function mainLoop() {
                 }
                 ballX += ballVelocityX;
                 ballY += ballVelocityY;
-                if (cpuY+75 != ballY && ballX > screen.width/4 && ballVelocityX > 0) cpuY += (ballY < cpuY+50) ? -3.5 : 3.5;
+                if (cpuY+50 != ballY && ballX > screen.width/4 && ballVelocityX > 0) cpuY += (ballY < cpuY+50) ? -3.5 : 3.5;
                 checkBallCollisions();
                 draw();
                 if (cpuPoints >= 11 && cpuPoints-2 >= playerPoints) layout = "c";
