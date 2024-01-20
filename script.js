@@ -65,14 +65,14 @@ function CPUcalculateBallVelocity() {
     let angle = Math.floor((Math.random() * 61) + 15);
     ballVelocityX = -velocityMultiplier*Math.cos(angle*(Math.PI/180));
     ballVelocityY = -velocityMultiplier*Math.sin(angle*(Math.PI/180));
-    velocityMultiplier+=0.1;
+    velocityMultiplier*=1.015;
 }
 
 function playerCalculateBallVelocity() {
     let angle = Math.floor((Math.random() * 61) + 15);
     ballVelocityX = velocityMultiplier*Math.cos(angle*(Math.PI/180));
     ballVelocityY = velocityMultiplier*Math.sin(angle*(Math.PI/180));
-    velocityMultiplier+=0.1;
+    velocityMultiplier*=1.015;
 }
 
 function checkBallCollisions() {
