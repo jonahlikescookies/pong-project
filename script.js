@@ -14,6 +14,15 @@ var playing = false;
 var velocityMultiplier = 6;
 var layout = "g";
 
+var fps, fpsInterval, startTime, now, then, elapsed;
+
+function startAnimating(fps) {
+    fpsInterval = 1000 / fps;
+    then = Date.now();
+    startTime = then;
+    mainLoop();
+}
+
 window.addEventListener("keydown", (e) => {
     switch (e.key) {
         case "w":
@@ -128,60 +137,67 @@ function setBallDirection() {
 }
 
 function mainLoop() {
-    switch (layout) {
-        case "g":
-            if (wKeyState && y > 0) {
-                y -= 3.5;
-            }
-            if (sKeyState && y < screen.height-150) {
-                y += 3.5;
-            }
-            if (ballY <= 0) {
-                if (ballVelocityX > 0) {
-                    playerCalculateBallVelocity();
-                } else if (ballVelocityX < 0) {
-                    CPUcalculateBallVelocity();
-                }
-                if (ballVelocityY < 0) ballVelocityY *= -1;
-            } else if (ballY >= screen.height-10) {
-                if (ballVelocityX > 0) {
-                    playerCalculateBallVelocity();
-                } else if (ballVelocityX < 0) {
-                    CPUcalculateBallVelocity();
-                }
-                if (ballVelocityY > 0) ballVelocityY *= -1;
-            }
-            ballX += ballVelocityX;
-            ballY += ballVelocityY;
-            if (cpuY+75 != ballY && ballX > screen.width/4 && ballVelocityX > 0) cpuY += (ballY < cpuY+50) ? -3.5 : 3.5;
-            checkBallCollisions();
-            draw();
-            if (cpuPoints >= 11 && cpuPoints-2 >= playerPoints) layout = "c";
-            if (playerPoints >= 11 && playerPoints-2 >= cpuPoints) layout = "p";
-            break;
-        case "p":
-            ctx.beginPath();
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, screen.width, screen.height);
-            ctx.fillStyle = "white";
-            ctx.font = "75px Orbitron";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("Player Wins!", screen.width/2, screen.height/2);
-            ctx.closePath();
-            break;
-        case "c":
-            ctx.beginPath();
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, screen.width, screen.height);
-            ctx.fillStyle = "white";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.font = "75px Orbitron";
-            ctx.fillText("CPU Wins!", screen.width/2, screen.height/2);
-            ctx.closePath();
-            break;
-        }
     requestAnimationFrame(()=>mainLoop());
+    
+    now = Date.now();
+    elapsed = now - then;
+
+    if (elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
+        switch (layout) {
+            case "g":
+                if (wKeyState && y > 0) {
+                    y -= 3.5;
+                }
+                if (sKeyState && y < screen.height-150) {
+                    y += 3.5;
+                }
+                if (ballY <= 0) {
+                    if (ballVelocityX > 0) {
+                        playerCalculateBallVelocity();
+                    } else if (ballVelocityX < 0) {
+                        CPUcalculateBallVelocity();
+                    }
+                    if (ballVelocityY < 0) ballVelocityY *= -1;
+                } else if (ballY >= screen.height-10) {
+                    if (ballVelocityX > 0) {
+                        playerCalculateBallVelocity();
+                    } else if (ballVelocityX < 0) {
+                        CPUcalculateBallVelocity();
+                    }
+                    if (ballVelocityY > 0) ballVelocityY *= -1;
+                }
+                ballX += ballVelocityX;
+                ballY += ballVelocityY;
+                if (cpuY+75 != ballY && ballX > screen.width/4 && ballVelocityX > 0) cpuY += (ballY < cpuY+50) ? -3.5 : 3.5;
+                checkBallCollisions();
+                draw();
+                if (cpuPoints >= 11 && cpuPoints-2 >= playerPoints) layout = "c";
+                if (playerPoints >= 11 && playerPoints-2 >= cpuPoints) layout = "p";
+                break;
+            case "p":
+                ctx.beginPath();
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, screen.width, screen.height);
+                ctx.fillStyle = "white";
+                ctx.font = "75px Orbitron";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("Player Wins!", screen.width/2, screen.height/2);
+                ctx.closePath();
+                break;
+            case "c":
+                ctx.beginPath();
+                ctx.fillStyle = "black";
+                ctx.fillRect(0, 0, screen.width, screen.height);
+                ctx.fillStyle = "white";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.font = "75px Orbitron";
+                ctx.fillText("CPU Wins!", screen.width/2, screen.height/2);
+                ctx.closePath();
+                break;
+        }
+    }
 }
-mainLoop();
+startAnimating(60);
